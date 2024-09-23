@@ -1,0 +1,32 @@
+#######################################
+# Syntax Coloring Map for EdSoftLED
+#######################################
+# Class
+#######################################
+
+EdSoftLED 	KEYWORD1
+
+#######################################
+# Methods and Functions
+#######################################	
+
+getPixelColor	KEYWORD2
+setBrightness	KEYWORD2
+setPixelColor   KEYWORD2
+makeRGBWcolor   KEYWORD2
+fill		KEYWORD2
+show            KEYWORD2
+showSK6812      KEYWORD2
+showWS2812      KEYWORD2
+getwhite        KEYWORD2
+getred          KEYWORD2
+getgreen        KEYWORD2
+getblue         KEYWORD2
+
+
+#getBrightness	KEYWORD2
+#getPin		KEYWORD2
+#numPixels	KEYWORD2
+
+
+
