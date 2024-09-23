@@ -7,11 +7,11 @@ Most libraries, for my programs, work in September 2024 with the new Arduino Nan
 Neopixel uses machine language to send a string of data into the LED strip while V3.0 has an Remote Control Transceiver (RMT) peripheral.
 
 Espressif has an example in their documentation for a few RGB WS2812 LEDs but I use the SK6812 RGBW LED strips.<br>
-I rewrote my EdSoft-SK6812 library for the Nano Every to be used with SK6812 and WS2812 LED strips.
+https://docs.espressif.com/projects/arduino-esp32/en/latest/api/rmt.html
 
-The library is tested upto 256 LEDs. V1.0.0 allocates memory for 512 RGBW LEDs. 
+The EdSoftLED library is tested upto 256 LEDs. V1.0.0 allocates memory for 512 RGBW LEDs. 
 
-I have to find out how to reallocate a structure and make to allocation of the number of LED flexible
+I have to find out how to reallocate a structure and make to allocation of the number of LED flexible.
 
 For now it works.
 
