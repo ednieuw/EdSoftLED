@@ -6,7 +6,20 @@ Compiling with the Adafruit Neopixel library with an Arduino Nano ESP32 works fi
 This library can be used for ESP32 core version 3.0 or higher from Espressif.
 https://docs.espressif.com/projects/arduino-esp32/en/latest/api/rmt.html
 
+You can add the code below to keep the software compatible between vore V2 using de Neopixel library and core V3 using EdsoftLED
+Both libraties use the same coding in the rest of the software except the functions not implemented in this library.
 
+```
+  #ifdef ESP_ARDUINO_VERSION_MAJOR
+  #if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
+      // Code for version 3.x
+  #else
+      // Code for version 2.x
+  #endif
+  #else
+      // Code for version 1.x
+  #endif
+```
 
 # EdSoftLED V1.0.1
 Arduino library for SK6812 based 4-channel RGBW and WS2812 based 3-channel RGB LEDs.
