@@ -38,7 +38,7 @@ class EdSoftLED
     uint8_t  getBlue( uint32_t c);	
     uint32_t getPixelColor(uint16_t index);
     uint32_t makeRGBWcolor( uint32_t Red, uint32_t Green, uint32_t Blue, uint32_t White);	
-	
+
  private:
 
 	uint8_t  _pin_mask;
@@ -47,9 +47,9 @@ class EdSoftLED
 	uint16_t  PreviousBright = 128;
 	RGBW     *_pixels;
 	RGBW     *_Orgpixels;		
+	rmt_data_t *_LEDdata;
     uint8_t  _pin_number ;
 	uint8_t  _LEDtype;
-	rmt_data_t led_data[32 * 512];
 };
 
 #endif /* EdSoftLED_H_ */
