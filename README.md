@@ -1,10 +1,11 @@
 # EdSoftLED
-Library for WS2812 and SK6812 LEDstrips with board ESP32 V3 on a Arduino Nano ESP32.
+Library for WS2812 and SK6812 LEDstrips with core ESP32 V3 on a Arduino Nano ESP32.
 
-Compiling with the Adafruit Neopixel library with an Arduino Nano ESP32 works fine when the board ESP32 version 2.0.13 from Arduino is used. 
+Compiling with the Adafruit Neopixel library with an Arduino Nano ESP32 works fine when the board Arduino Nano ESP32 core version 2.0.13 from Arduino is used. 
 
-This library can be used for ESP32 version 3.0 or higher from Espressif.
+This library can be used for ESP32 core version 3.0 or higher from Espressif.
 https://docs.espressif.com/projects/arduino-esp32/en/latest/api/rmt.html
+
 
 
 # EdSoftLED V1.0.1
@@ -30,13 +31,16 @@ uint32_t makeRGBWcolor( uint32_t Red, uint32_t Green, uint32_t Blue, uint32_t Wh
 2. In Arduino IDE: Sketch -> Include Library -> Add .ZIP Library
 3. Include the library in your project using "#include <EdSoftLED.h>" directive
 
+Select board: ESP32 -> Arduino Nano ESP32 (almost at the bottom of a long list)
+In the examples the LED strip is connected to pin D5 (= GPIO8)
+If the LEDs do not turn on change LED_PIN D5 in 8.
 Initialize with LED type  SK6812WRGB or WS2812RGB.
 If the colours do not match change the 0xWWRRGGBB sequence in your program.
 
 ## Example
 ```
 #include <EdSoftLED.h>
-EdSoftLED LED(4, 5, SK6812WRGB);          // EdSoftLED LED(NUM_LEDS, LED_PIN, LED_type); // WS2812RGB
+EdSoftLED LED(4, D5, SK6812WRGB);         // EdSoftLED LED(NUM_LEDS, LED_PIN, LED_type); // WS2812RGB
 uint32_t color1 = 0X000000FF;             // 0xWWRRGGBB  
 
 void setup() 
