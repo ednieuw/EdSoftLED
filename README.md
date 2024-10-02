@@ -6,37 +6,54 @@ Compiling with the Adafruit Neopixel library with an Arduino Nano ESP32 works fi
 This library can be used for ESP32 core version 3.0 or higher from Espressif.
 https://docs.espressif.com/projects/arduino-esp32/en/latest/api/rmt.html
 
-You can add the code below to keep the software compatible between vore V2 using de Neopixel library and core V3 using EdsoftLED
+The library is kept compatible with the Neopixel library but not all functionality from the Neopixel library is available.
+
+You can add the code below to keep the software compatible between core V2 using de Neopixel library and core V3 using EdsoftLED
 Both libraties use the same coding in the rest of the software except the functions not implemented in this library.
 
 ```
-  #ifdef ESP_ARDUINO_VERSION_MAJOR
   #if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
       // Code for version 3.x
   #else
       // Code for version 2.x
   #endif
-  #else
-      // Code for version 1.x
-  #endif
+```
+For example:
+ ```
+#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
+#include "EdSoftLED.h"
+#else
+#include <Adafruit_NeoPixel.h>
+#endif
 ```
 
-# EdSoftLED V1.0.1
+
+
+
+# EdSoftLED V1.0.2
 Arduino library for SK6812 based 4-channel RGBW and WS2812 based 3-channel RGB LEDs.
 
 ```
-void     fill(RGBW RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);	
-void     fill(uint32_t RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);
-void     setBrightness(uint16_t Bright);
-void     setPixelColor(uint16_t i, RGBW RGBWColor);	
-void     setPixelColor(uint16_t i, uint32_t RGBWColor);
-void     show(void);
-uint8_t  getwhite(uint32_t c);
-uint8_t  getred(  uint32_t c);
-uint8_t  getgreen(uint32_t c);
-uint8_t  getblue( uint32_t c);	
-uint32_t getPixelColor(uint16_t index);
-uint32_t makeRGBWcolor( uint32_t Red, uint32_t Green, uint32_t Blue, uint32_t White);	
+	void     begin(void);
+	void     fill(RGBW RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);	
+	void     fill(uint32_t RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);
+	void     setBrightness(uint8_t Bright);
+  void     setPixelColor(uint16_t i, RGBW RGBWColor);	
+  void     setPixelColor(uint16_t i, uint32_t RGBWColor);
+  void     setPixelColor(uint16_t i, uint8_t r, uint8_t g, uint8_t b, uint8_t w); 
+	void     show(void);
+	void     showSK6812(void);
+	void     showWS2812(void);	
+  uint8_t  getWhite(uint32_t c);
+  uint8_t  getRed(  uint32_t c);
+  uint8_t  getGreen(uint32_t c);
+  uint8_t  getBlue( uint32_t c);	
+  uint32_t getPixelColor(uint16_t index);
+  uint32_t makeRGBWcolor( uint32_t Red, uint32_t Green, uint32_t Blue, uint32_t White);	
+  static uint32_t Color(uint8_t r, uint8_t g, uint8_t b)
+                   { return ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;  }
+  static uint32_t Color(uint8_t r, uint8_t g, uint8_t b, uint8_t w)
+                   { return ((uint32_t)w << 24) | ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;  }		
 ```
 
 ## Usage
