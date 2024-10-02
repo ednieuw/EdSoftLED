@@ -34,25 +34,25 @@ For example:
 Arduino library for SK6812 based 4-channel RGBW and WS2812 based 3-channel RGB LEDs.
 
 ```
-	void     begin(void);
-	void     fill(RGBW RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);	
-	void     fill(uint32_t RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);
-	void     setBrightness(uint8_t Bright);
-  void     setPixelColor(uint16_t i, RGBW RGBWColor);	
-  void     setPixelColor(uint16_t i, uint32_t RGBWColor);
-  void     setPixelColor(uint16_t i, uint8_t r, uint8_t g, uint8_t b, uint8_t w); 
-	void     show(void);
-	void     showSK6812(void);
-	void     showWS2812(void);	
-  uint8_t  getWhite(uint32_t c);
-  uint8_t  getRed(  uint32_t c);
-  uint8_t  getGreen(uint32_t c);
-  uint8_t  getBlue( uint32_t c);	
-  uint32_t getPixelColor(uint16_t index);
-  uint32_t makeRGBWcolor( uint32_t Red, uint32_t Green, uint32_t Blue, uint32_t White);	
-  static uint32_t Color(uint8_t r, uint8_t g, uint8_t b)
+void     begin(void);
+void     fill(RGBW RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);	
+void     fill(uint32_t RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);
+void     setBrightness(uint8_t Bright);
+void     setPixelColor(uint16_t i, RGBW RGBWColor);	
+void     setPixelColor(uint16_t i, uint32_t RGBWColor);
+void     setPixelColor(uint16_t i, uint8_t r, uint8_t g, uint8_t b, uint8_t w); 
+void     show(void);
+void     showSK6812(void);
+void     showWS2812(void);	
+uint8_t  getWhite(uint32_t c);
+uint8_t  getRed(  uint32_t c);
+uint8_t  getGreen(uint32_t c);
+uint8_t  getBlue( uint32_t c);	
+uint32_t getPixelColor(uint16_t index);
+uint32_t makeRGBWcolor( uint32_t Red, uint32_t Green, uint32_t Blue, uint32_t White);	
+static uint32_t Color(uint8_t r, uint8_t g, uint8_t b)
                    { return ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;  }
-  static uint32_t Color(uint8_t r, uint8_t g, uint8_t b, uint8_t w)
+static uint32_t Color(uint8_t r, uint8_t g, uint8_t b, uint8_t w)
                    { return ((uint32_t)w << 24) | ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;  }		
 ```
 
