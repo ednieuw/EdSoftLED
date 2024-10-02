@@ -1,5 +1,7 @@
 # EdSoftLED
-Library for WS2812 and SK6812 LEDstrips with core ESP32 V3 on a Arduino Nano ESP32.
+Library for WS2812 and SK6812 LEDstrips with core ESP32 V3.x.x.
+
+It is tested with an Arduino Nano ESP32 but will probably also work with other ESP32 boards.
 
 Compiling with the Adafruit Neopixel library with an Arduino Nano ESP32 works fine when the board Arduino Nano ESP32 core version 2.0.13 from Arduino is used. 
 
@@ -26,9 +28,6 @@ For example:
 #include <Adafruit_NeoPixel.h>
 #endif
 ```
-
-
-
 
 # EdSoftLED V1.0.2
 Arduino library for SK6812 based 4-channel RGBW and WS2812 based 3-channel RGB LEDs.
