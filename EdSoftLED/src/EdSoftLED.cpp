@@ -33,8 +33,20 @@ EdSoftLED::~EdSoftLED()
 	delete [] _pixels;
 	delete [] _Orgpixels;
 	delete [] _LEDdata;
+	pinMode(_pin_number, INPUT);
    //rmt_driver_uninstall( skconfig.channel );	
 }
+
+//--------------------------------------------
+//  Begin 
+//--------------------------------------------
+void EdSoftLED::begin(void)
+{
+ pinMode(_pin_number, OUTPUT);
+ digitalWrite(_pin_number, LOW);
+}
+
+
 
 //--------------------------------------------
 //  Set Brightness (0 - 255)of a pixel to be written 
@@ -57,7 +69,9 @@ if(_LEDtype == WS2812RGB)	EdSoftLED::showWS2812();
 
 }
 
-
+//--------------------------------------------
+// Show SK6812 LED strip
+//--------------------------------------------
 void EdSoftLED::showSK6812()
 {
  uint32_t Kleur = 0;
@@ -98,7 +112,9 @@ void EdSoftLED::showSK6812()
  memcpy(_pixels,_Orgpixels, _count_led * sizeof(RGBW) );
 }
 
-
+//--------------------------------------------
+// Show WS2812 LED strip 
+//--------------------------------------------
 void EdSoftLED::showWS2812()
 {
  uint32_t Kleur = 0;
@@ -135,8 +151,6 @@ void EdSoftLED::showWS2812()
  rmtWrite(_pin_number, _LEDdata, _count_led * 24, RMT_WAIT_FOR_EVER);
  memcpy(_pixels,_Orgpixels, _count_led * sizeof(RGBW) );
 }
-
-
 
 //--------------------------------------------
 // Get Pixel Color 
@@ -176,6 +190,21 @@ void EdSoftLED::setPixelColor(uint16_t i, uint32_t RGBWColor)
 	}
  return;
 }
+//--------------------------------------------
+//  Write an uint32_t in strip array _pixels
+//--------------------------------------------
+void EdSoftLED::setPixelColor(uint16_t i, uint8_t r, uint8_t g, uint8_t b, uint8_t w) 
+{
+	if (i < _count_led) 
+	{
+    _pixels[i].r = r;
+    _pixels[i].g = g;
+    _pixels[i].b = b;
+    _pixels[i].w = w;
+	}
+ return;
+}
+
 //------------------------------------------------------------------------------
 // Function to make RGBW color
 //------------------------------------------------------------------------------ 

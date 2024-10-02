@@ -10,11 +10,12 @@ EdSoftLED 	KEYWORD1
 # Methods and Functions
 #######################################	
 
+begin		    KEYWORD2
 getPixelColor	KEYWORD2
 setBrightness	KEYWORD2
 setPixelColor   KEYWORD2
 makeRGBWcolor   KEYWORD2
-fill		KEYWORD2
+fill		    KEYWORD2
 show            KEYWORD2
 showSK6812      KEYWORD2
 showWS2812      KEYWORD2
