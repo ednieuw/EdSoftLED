@@ -6,7 +6,7 @@ It is tested with an Arduino Nano ESP32 and a ESP32-S3-WROOM-DevKitC-1 but it wi
 Compiling with the Adafruit Neopixel library with an Arduino Nano ESP32 works fine when the board Arduino Nano ESP32 core version 2.0.13 from Arduino is used. 
 
 NB (3jun2025) On ESP32 Core 3.2.0 the Adafruit Neopixel can be used again. 
-But his library also still work fine. 
+But this library also still work fine. 
 
 In the Examples there are two very basic examples to drive a WS2812 and a SK6812 LED-strip. 
 
@@ -72,7 +72,8 @@ In the examples the LED strip is connected to pin 8 (= GPIO8).
 Install ESP32 boards<br>
 Board: Arduino Nano ESP32 core version 2.0.17 or ESP32 core version 3.2.1 <br>
 Partition Scheme: With FAT<br>
-Pin Numbering: By GPIO number (legacy). Not 'By Arduino pin (default)'<br>
+Pin Numbering: <B>By GPIO number (legacy)</B>. Not 'By Arduino pin (default)'<br>
+USM mode: Normal (Tiny USB)
 
 Initialize with LED type  SK6812WRGB, SK6812WGRB, WS2812RGB or WS2812GRB to match your colour sequence.
 
