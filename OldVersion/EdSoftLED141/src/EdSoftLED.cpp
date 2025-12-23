@@ -8,7 +8,7 @@ EdSoftLED::EdSoftLED(uint16_t num_leds, const uint8_t pin, uint8_t LEDtype)
 	_pin_number = pin;
 	_LEDtype    = LEDtype;
 	_pixels     = new RGBW[_count_led];   
-//	_Orgpixels  = new RGBW[_count_led];
+	_Orgpixels  = new RGBW[_count_led];
 	_LEDdata    = new rmt_data_t[32 * _count_led] ;
  	
 	
@@ -31,7 +31,7 @@ EdSoftLED::EdSoftLED()
 EdSoftLED::~EdSoftLED()
 {
 	delete [] _pixels;
-//	delete [] _Orgpixels;
+	delete [] _Orgpixels;
 	delete [] _LEDdata;
 //	pinMode(_pin_number, INPUT);
  //  rmt_driver_uninstall( skconfig.channel );	
@@ -61,8 +61,7 @@ void EdSoftLED::setBrightness(uint8_t Bright)
 //  Write the _pixels array to the strip
 //  that will be multiplied with the Brightness factor
 //--------------------------------------------
-void EdSoftLED::show() 
-{
+void EdSoftLED::show() {
 
     if (_LEDtype == SK6812WRGB || _LEDtype == SK6812WGRB)
         EdSoftLED::showSK6812();
@@ -70,7 +69,7 @@ void EdSoftLED::show()
     if (_LEDtype == WS2812RGB || _LEDtype == WS2812GRB)
         EdSoftLED::showWS2812();
 }
- 
+
 //--------------------------------------------
 // Show SK6812 LED strip
 //--------------------------------------------
@@ -79,48 +78,39 @@ void EdSoftLED::showSK6812()
  uint32_t Kleur = 0;
  uint32_t LedDataBit = 0;                                    // counter for the bit in led_data
  
- //memcpy(_Orgpixels, _pixels,_count_led * sizeof(RGBW) );    // backup the last used colours in the strip
+ memcpy(_Orgpixels, _pixels,_count_led * sizeof(RGBW) );    // backup the last used colours in the strip
 
-  for (uint32_t i = 0; i< _count_led; i++)                   // Prepare the string with dimmed values
+ for (uint32_t i = 0; i< _count_led; i++)                   // Prepare the string with dimmed values
 	{
      Kleur |= ((uint32_t)(_pixels[i].r * Brightness / 255)<<24);
-    if(_LEDtype == SK6812WGRB)	 
-      {     
-       Kleur |= ((uint32_t)(_pixels[i].g * Brightness / 255)<<16);	 
-       Kleur |= ((uint32_t)(_pixels[i].b * Brightness / 255)<<8);
-      }	
-    else
-      {
-        Kleur |= ((uint32_t)(_pixels[i].b * Brightness / 255)<<16);	 
-        Kleur |= ((uint32_t)(_pixels[i].g * Brightness / 255)<<8);
-      }
+     Kleur |= ((uint32_t)(_pixels[i].g * Brightness / 255)<<16);	 
+     Kleur |= ((uint32_t)(_pixels[i].b * Brightness / 255)<<8);
      Kleur |= ((uint32_t)(_pixels[i].w * Brightness / 255));
 //	 Serial.print(i); Serial.print(" : ");Serial.println(Kleur,HEX);
 //	 Serial.print(i); Serial.print(" : ");Serial.println(Kleur,BIN);	 
-
+	 
      for (uint8_t bit = 0; bit < 32; bit++) 
         {
-      if (Kleur & (1UL << (31 - bit))) 
-	  {
-       _LEDdata[LedDataBit].level0 = 1;
-       _LEDdata[LedDataBit].duration0 = 9;  // T1H ≈0.9µs
-       _LEDdata[LedDataBit].level1 = 0;
-       _LEDdata[LedDataBit].duration1 = 6;  // T1L ≈0.6µs
-       } 
-	 else 
-       {
-       _LEDdata[LedDataBit].level0 = 1;
-       _LEDdata[LedDataBit].duration0 = 3;  // T0H ≈0.3µs
-       _LEDdata[LedDataBit].level1 = 0;
-       _LEDdata[LedDataBit].duration1 = 12; // T0L ≈1.2µs
-       }
+         if (Kleur & (1 << (31 - bit)))
+  	  {
+           _LEDdata[LedDataBit].level0 = 1;
+           _LEDdata[LedDataBit].duration0 = 8;
+           _LEDdata[LedDataBit].level1 = 0;
+           _LEDdata[LedDataBit].duration1 = 4;
+          } 
+		else 
+		  {
+           _LEDdata[LedDataBit].level0 = 1;
+           _LEDdata[LedDataBit].duration0 = 4;
+           _LEDdata[LedDataBit].level1 = 0;
+           _LEDdata[LedDataBit].duration1 = 8;
+          }
 	   LedDataBit++;	  
       }
 	  Kleur = 0;
 	}
  rmtWrite(_pin_number, _LEDdata, _count_led * 32, RMT_WAIT_FOR_EVER);
- delayMicroseconds(300);   // REQUIRED for SK6812
-// memcpy(_pixels,_Orgpixels, _count_led * sizeof(RGBW) );
+ memcpy(_pixels,_Orgpixels, _count_led * sizeof(RGBW) );
 }
 
 //--------------------------------------------
@@ -130,9 +120,11 @@ void EdSoftLED::showWS2812() {
     uint32_t Kleur = 0;
     uint32_t LedDataBit = 0; // counter for the bit in _LEDdata
 
- //   memcpy(_Orgpixels, _pixels, _count_led * sizeof(RGBW)); // backup the last used colours in the strip
+    memcpy(_Orgpixels, _pixels,
+        _count_led * sizeof(RGBW)); // backup the last used colours in the strip
 
-    for (uint32_t i = 0; i < _count_led; i++)  // Prepare the string with dimmed values
+    for (uint32_t i = 0; i < _count_led;
+        i++) // Prepare the string with dimmed values
     {
         const uint8_t r = (uint8_t)(_pixels[i].r * Brightness / 255);
         const uint8_t g = (uint8_t)(_pixels[i].g * Brightness / 255);
@@ -140,10 +132,10 @@ void EdSoftLED::showWS2812() {
 
         // WS2812 expects 24 bits sent MSB->LSB in the LED’s native byte order.
         // RGB: [R][G][B] ; GRB: [G][R][B]
-        if (_LEDtype == WS2812RGB) {
+        if (_LEDtype == WS2812GRB) {
             Kleur = ((uint32_t)g << 16) | ((uint32_t)r << 8) | b;
         }
-        else { // WS2812GRB
+        else { // WS2812RGB
             Kleur = ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;
         }
 
@@ -166,7 +158,7 @@ void EdSoftLED::showWS2812() {
     }
 
     rmtWrite(_pin_number, _LEDdata, _count_led * 24, RMT_WAIT_FOR_EVER);
- //   memcpy(_pixels, _Orgpixels, _count_led * sizeof(RGBW));
+    memcpy(_pixels, _Orgpixels, _count_led * sizeof(RGBW));
 }
 
 //--------------------------------------------

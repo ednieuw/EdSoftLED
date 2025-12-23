@@ -1,21 +1,24 @@
 # EdSoftLED
-Library for WS2812 and SK6812 LEDstrips with core ESP32 V3.x.x.
+Library for WS2812 and SK6812 LEDstrips with core ESP32 V3.x.x.<br>
 
-It is tested with an Arduino Nano ESP32 and a ESP32-S3-WROOM-DevKitC-1 but it will probably also work with other ESP32 boards.
+Latest version 1.8.0 is from December 2025 with optimized timings for SK6812 LEDs.<br>
 
-Compiling with the Adafruit Neopixel library with an Arduino Nano ESP32 works fine when the board Arduino Nano ESP32 core version 2.0.13 from Arduino is used. 
+It is tested with an Arduino Nano ESP32 and an ESP32-S3-WROOM-DevKitC-1 but it will probably also work with other ESP32 boards.
 
-NB (3jun2025) On ESP32 Core 3.2.0 the Adafruit Neopixel can be used again. 
-But this library also still work fine. 
 
-In the Examples there are two very basic examples to drive a WS2812 and a SK6812 LED-strip. 
+NB (3jun2025) On ESP32 Core 3.2.0 the Adafruit Neopixel can be used again.<br>
+Pin Numbering: By Arduino pin (default)     -- > with EdsoftLED both Pin numberings can be used<br>
+               By GPIO number (legacy).     -- > When using NEOpixel<br>
+  
 
-This library can be used for ESP32 core version 3.0 or higher from Espressif.
+In the Examples folder there are basic examples to drive a WS2812 and a SK6812 LED-strip. 
+
+The EdSoftLED library can be used for ESP32 core version 3.0 or higher from Espressif.
 https://docs.espressif.com/projects/arduino-esp32/en/latest/api/rmt.html
 
 The library is kept compatible with the Neopixel library but not all functionality from the Neopixel library is available.
 
-You can add the code below to keep the software compatible between core V2 using de Neopixel library and core V3 using EdsoftLED
+You can add the code below to keep the software compatible between core V2 using de Neopixel library and core V3 using EdsoftLED.<br>
 Both libraties use the same coding in the rest of the software except the functions not implemented in this library.
 
 ```
@@ -34,7 +37,7 @@ For example:
 #endif
 ```
 
-# EdSoftLED V1.4.1
+# EdSoftLED >= V1.8.0
 Arduino library for SK6812 based 4-channel RGBW and WS2812 based 3-channel RGB LEDs.
 
 ```
@@ -103,58 +106,4 @@ void loop()
 # Timings
 The timing for the bit encoded pulses are different for the two LED types. While expermenting I discovered the WS2812 LED strips work fine with the SK6812 timing settings. To be sure this library uses the suggested timings for the selected LED type.
 
-WS2812 timing
-```
-//
-// Note: This example uses a board with 32 WS2812b LEDs chained one
-//      after another, each RGB LED has its 24 bit value
-//      for color configuration (8b for each color)
-//
-//      Bits encoded as pulses as follows:
-//
-//      "0":
-//         +-------+              +--
-//         |       |              |
-//         |       |              |
-//         |       |              |
-//      ---|       |--------------|
-//         +       +              +
-//         | 0.4us |   0.85 0us   |
-//
-//      "1":
-//         +-------------+       +--
-//         |             |       |
-//         |             |       |
-//         |             |       |
-//         |             |       |
-//      ---+             +-------+
-//         |    0.8us    | 0.4us |
-//
-```
-
-SK6812 timing
-```
-// Note: This example uses a board with 32 SK6812 LEDs chained one
-//      after another, each RGB LED has its 24 bit value
-//      for color configuration (8b for each color)
-//
-//      Bits encoded as pulses as follows:
-//
-//      "0":
-//         +-------+              +--
-//         |       |              |
-//         |       |              |
-//         |       |              |
-//      ---|       |--------------|
-//         +       +              +
-//         | 0.29us |   0.85 0us   |
-//
-//      "1":
-//         +-------------+       +--
-//         |             |       |
-//         |             |       |
-//         |             |       |
-//         |             |       |
-//      ---+             +-------+
-//         |    0.8us    | 0.4us |
-```
+\
