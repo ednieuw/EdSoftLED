@@ -9,7 +9,7 @@ EdSoftLED::EdSoftLED(uint16_t num_leds, const uint8_t pin, uint8_t LEDtype)
 	_LEDtype    = LEDtype;
 	_pixels     = new RGBW[_count_led];   
 //	_Orgpixels  = new RGBW[_count_led];
-	_LEDdata    = new rmt_data_t[32 * _count_led] ;
+	_LEDdata    = new rmt_data_t[32 * _count_led + 1] ;
  	
 	
   if (!rmtInit(_pin_number, RMT_TX_MODE, RMT_MEM_NUM_BLOCKS_1, 10000000)) 
@@ -38,7 +38,21 @@ EdSoftLED::~EdSoftLED()
 }
 
 //--------------------------------------------
-//  Begin 
+//  Resize LED strip: clears current LEDs, reallocates for new count
+//--------------------------------------------
+void EdSoftLED::updateLength(uint16_t n)
+{
+ memset(_pixels, 0, _count_led * sizeof(RGBW));
+ show();
+ delete [] _pixels;
+ delete [] _LEDdata;
+ _count_led = n;
+ _pixels  = new RGBW[_count_led]();
+ _LEDdata = new rmt_data_t[32 * _count_led + 1];
+}
+
+//--------------------------------------------
+//  Begin
 //--------------------------------------------
 void EdSoftLED::begin(void)
 {
@@ -118,6 +132,7 @@ void EdSoftLED::showSK6812()
       }
 	  Kleur = 0;
 	}
+ _LEDdata[LedDataBit] = {0, 0, 0, 0};
  rmtWrite(_pin_number, _LEDdata, _count_led * 32, RMT_WAIT_FOR_EVER);
  delayMicroseconds(300);   // REQUIRED for SK6812
 // memcpy(_pixels,_Orgpixels, _count_led * sizeof(RGBW) );
@@ -164,7 +179,7 @@ void EdSoftLED::showWS2812() {
         }
         Kleur = 0;
     }
-
+    _LEDdata[LedDataBit] = {0, 0, 0, 0};
     rmtWrite(_pin_number, _LEDdata, _count_led * 24, RMT_WAIT_FOR_EVER);
  //   memcpy(_pixels, _Orgpixels, _count_led * sizeof(RGBW));
 }

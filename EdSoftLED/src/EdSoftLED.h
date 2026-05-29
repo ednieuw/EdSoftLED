@@ -25,6 +25,7 @@ class EdSoftLED
 	~EdSoftLED();
 	
 	void     begin(void);
+	void     updateLength(uint16_t n);
 	void     fill(RGBW RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);	
 	void     fill(uint32_t RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);
 	void     setBrightness(uint8_t Bright);

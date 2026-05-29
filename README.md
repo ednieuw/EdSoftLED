@@ -1,66 +1,82 @@
-# EdSoftLED
-Library for WS2812 and SK6812 LEDstrips with core ESP32 V3.x.x.<br>
-
-Latest version 1.8.0 is from December 2025 with optimized timings for SK6812 LEDs.<br>
-
-It is tested with an Arduino Nano ESP32 and an ESP32-S3-WROOM-DevKitC-1 but it will probably also work with other ESP32 boards.
-
-
-NB (3jun2025) On ESP32 Core 3.2.0 the Adafruit Neopixel can be used again.<br>
-Pin Numbering: By Arduino pin (default)     -- > with EdsoftLED both Pin numberings can be used<br>
-               By GPIO number (legacy).     -- > When using NEOpixel<br>
-  
-
-In the Examples folder there are basic examples to drive a WS2812 and a SK6812 LED-strip. 
-
-The EdSoftLED library can be used for ESP32 core version 3.0 or higher from Espressif.
-https://docs.espressif.com/projects/arduino-esp32/en/latest/api/rmt.html
-
-The library is kept compatible with the Neopixel library but not all functionality from the Neopixel library is available.
-
-You can add the code below to keep the software compatible between core V2 using de Neopixel library and core V3 using EdsoftLED.<br>
-Both libraties use the same coding in the rest of the software except the functions not implemented in this library.
-
-```
-  #if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
-      // Code for version 3.x
-  #else
-      // Code for version 2.x
-  #endif
-```
-For example:
- ```
-#if ESP_ARDUINO_VERSION >= ESP_ARDUINO_VERSION_VAL(3, 0, 0)
-#include "EdSoftLED.h"
-#else
-#include <Adafruit_NeoPixel.h>
-#endif
-```
-
-# EdSoftLED >= V1.8.0
+# EdSoftLED V1.9.0
 Arduino library for SK6812 based 4-channel RGBW and WS2812 based 3-channel RGB LEDs.
 
+
 ```
-void     begin(void);
 void     fill(RGBW RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);	
 void     fill(uint32_t RGBWColor, uint16_t FirstLed, uint16_t NoofLEDs);
-void     setBrightness(uint8_t Bright);
+void     setBrightness(uint16_t Bright);
 void     setPixelColor(uint16_t i, RGBW RGBWColor);	
 void     setPixelColor(uint16_t i, uint32_t RGBWColor);
-void     setPixelColor(uint16_t i, uint8_t r, uint8_t g, uint8_t b, uint8_t w); 
 void     show(void);
-void     showSK6812(void);
-void     showWS2812(void);	
-uint8_t  getWhite(uint32_t c);
-uint8_t  getRed(  uint32_t c);
-uint8_t  getGreen(uint32_t c);
-uint8_t  getBlue( uint32_t c);	
+uint8_t  getwhite(uint32_t c);
+uint8_t  getred(  uint32_t c);
+uint8_t  getgreen(uint32_t c);
+uint8_t  getblue( uint32_t c);	
 uint32_t getPixelColor(uint16_t index);
-uint32_t makeRGBWcolor( uint32_t Red, uint32_t Green, uint32_t Blue, uint32_t White);	
-static uint32_t Color(uint8_t r, uint8_t g, uint8_t b)
-                   { return ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;  }
-static uint32_t Color(uint8_t r, uint8_t g, uint8_t b, uint8_t w)
-                   { return ((uint32_t)w << 24) | ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;  }		
+uint32_t makeRGBWcolor( uint32_t Red, uint32_t Green, uint32_t Blue, uint32_t White);
+void     updateLength(uint16_t n);
+```
+
+## Function reference
+
+### fill
+`fill(RGBWColor, FirstLed, NoofLEDs)` sets a range of LEDs to the same colour. `FirstLed` is zero-based. Accepts either a packed `uint32_t` (0xWWRRGGBB) or an `RGBW` struct. Does not call `show()`.
+
+```cpp
+LED.fill(0x000000FF, 0, 4);          // set LEDs 0–3 to blue
+```
+
+### setBrightness
+`setBrightness(Bright)` sets the global brightness scale (0–255) applied during `show()`. The stored pixel values are not changed, so you can adjust brightness at any time.
+
+```cpp
+LED.setBrightness(128);              // 50% brightness
+```
+
+### setPixelColor
+`setPixelColor(i, color)` sets a single LED at index `i`. Accepts a packed `uint32_t` (0xWWRRGGBB), an `RGBW` struct, or four separate `r, g, b, w` bytes. Does not call `show()`.
+
+```cpp
+LED.setPixelColor(0, 0x00FF0000);           // red
+LED.setPixelColor(0, {0, 0, 0, 255});       // white via W channel
+LED.setPixelColor(0, 255, 0, 0, 0);        // red via r,g,b,w
+```
+
+### show
+`show()` sends the current pixel buffer to the LED strip, applying the brightness scaling. Call after any `setPixelColor` or `fill` calls.
+
+```cpp
+LED.show();
+```
+
+### getPixelColor
+`getPixelColor(i)` returns the stored colour of LED `i` as a packed `uint32_t` (0xWWRRGGBB).
+
+```cpp
+uint32_t c = LED.getPixelColor(3);
+```
+
+### getWhite / getRed / getGreen / getBlue
+Extract individual channels from a packed `uint32_t` colour value.
+
+```cpp
+uint8_t r = LED.getRed(0x00FF0000);  // returns 255
+```
+
+### makeRGBWcolor
+`makeRGBWcolor(Red, Green, Blue, White)` packs four channel values into a single `uint32_t` (0xWWRRGGBB).
+
+```cpp
+uint32_t c = LED.makeRGBWcolor(255, 0, 0, 0);  // red
+```
+
+### updateLength
+`updateLength(n)` clears and turns off all currently allocated LEDs, then reallocates the strip for `n` LEDs. Useful when you have a large LED matrix that lights up randomly during upload — allocate for the full matrix size at startup, call `updateLength` with the smaller count to blank the matrix before continuing your sketch.
+
+```cpp
+EdSoftLED LED(255, 5, SK6812WRGB);  // allocate for full 16x16 matrix
+LED.updateLength(20);               // blanks all 255 LEDs, continues with 20
 ```
 
 ## Usage
@@ -68,22 +84,15 @@ static uint32_t Color(uint8_t r, uint8_t g, uint8_t b, uint8_t w)
 2. In Arduino IDE: Sketch -> Include Library -> Add .ZIP Library
 3. Include the library in your project using "#include <EdSoftLED.h>" directive
 
-Select board: ESP32 -> Arduino Nano ESP32 (almost at the bottom of a long list)
-In the examples the LED strip is connected to pin 8 (= GPIO8).
+Initialize with LED type  SK6812WRGB, SK6812WGRB, WS2812RGB or WS2812GRB to match the colour sequence of the LEDs used.
 
-## How to compile: 
-Install ESP32 boards<br>
-Board: Arduino Nano ESP32 core version 2.0.17 or ESP32 core version 3.2.1 <br>
-Partition Scheme: With FAT<br>
-Pin Numbering: <B>By GPIO number (legacy)</B>. Not 'By Arduino pin (default)'<br>
-USM mode: Normal (Tiny USB)
-
-Initialize with LED type  SK6812WRGB, SK6812WGRB, WS2812RGB or WS2812GRB to match your colour sequence.
+If the colours do not match change the 0xWWRRGGBB sequence in your program.
 
 ## Example
 ```
 #include <EdSoftLED.h>
-EdSoftLED LED(4, 8, SK6812WRGB);         // EdSoftLED LED(NUM_LEDS, LED_PIN, LED_type); // WS2812RGB
+EdSoftLED LED(4, 5, SK6812WRGB);          // EdSoftLED LED(NUM_LEDS, LED_PIN, LED_type); // WS2812RGB
+// EdSoftLED LED(4, 5, WS2812RGB);        // if WS2812 LEDs are used
 uint32_t color1 = 0X000000FF;             // 0xWWRRGGBB  
 
 void setup() 
@@ -103,7 +112,4 @@ void loop()
 }
 ```
 
-# Timings
-The timing for the bit encoded pulses are different for the two LED types. While expermenting I discovered the WS2812 LED strips work fine with the SK6812 timing settings. To be sure this library uses the suggested timings for the selected LED type.
 
-\
