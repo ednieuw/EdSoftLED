@@ -13,8 +13,21 @@
 #include <Wire.h>                                  // Arduino standard library
 #include "RTClib.h"                                // Arduino standard library or https://github.com/adafruit/RTClib 
  
+//------------------------------------------------------------------------------
+// LED matrix orientation configuration
+// Set these to match your physical panel. Use the XY test in setup() to find them:
+//   light XY(0,0)=red, XY(1,0)=green, XY(0,1)=blue, then adjust until
+//   red=top-left, green=one right, blue=one below.
+//------------------------------------------------------------------------------
+#define MATRIX_TRANSPOSE   0     // 1 = panel mounted rotated 90deg (swap x/y axes)
+#define MATRIX_FLIP_X      0     // 1 = mirror horizontally
+#define MATRIX_FLIP_Y      1     // 1 = flip vertically (upside down)
+#define MATRIX_SERPENTINE  1     // 1 = rows alternate direction (zig-zag wiring); 0 = all rows same direction
+#define MATRIX_ODD_ROWS    1     // which rows are reversed when serpentine: 1 = odd rows, 0 = even rows
 
-const byte LED_PIN       = 8;                     // = GPIO pin 8.  Pin where the LED strip is attached to
+
+
+const byte LED_PIN       = D5;                     // = GPIO pin 8.  Pin where the LED strip is attached to
 const int NUM_LEDS       = 256;                    // How many leds in  strip?
 const byte MATRIX_WIDTH  = 16;                     // Width in pixels of the LED strips
 const byte MATRIX_HEIGHT = 16;                     // Height in pixels of the LED strips
@@ -43,17 +56,83 @@ const byte PROGMEM Getal[10][3][5]  = {
                      { {1, 1, 1, 1, 1}, {1, 0, 1, 0, 1}, {1, 1, 1, 1, 1} },  //8
                      { {1, 1, 1, 0, 1}, {1, 0, 1, 0, 1}, {1, 1, 1, 1, 1} }   //9
                      }; 
+#define XY_CALIBRATE  0          // set to 1 to show the R/G/B corner test instead of the clock
+
+#if XY_CALIBRATE
+void XYTest(void)
+{
+ LedsOff();
+ LED.setPixelColor(XY(0,0), 0x00FF0000);   // origin -> RED
+ LED.setPixelColor(XY(1,0), 0x0000FF00);   // +x     -> GREEN
+ LED.setPixelColor(XY(0,1), 0x000000FF);   // +y     -> BLUE
+ LED.show();
+}
+#endif
+
+
+
 //------------------------------------------------------------------------------
 // ARDUINO Setup
 //------------------------------------------------------------------------------
 void setup() 
 {
  Serial.begin(9600);                                                                          // Setup the serial port to 9600 baud       
+ LED.begin();
  RTCklok.begin();                                           // If no RTC module is installed use the ATMEGAchip clock
  LED.setBrightness(25);    
  LedsOff();                                                                                   // Turn all LEDs off
  LED.show();                                                                                  // and do not forget LED.show(); to send the data in the LEDstrip
  msTick = millis();
+ LedsOff();
+LED.setPixelColor(XY(0,0), 0x00FF0000);  // origin -> RED
+LED.setPixelColor(XY(1,0), 0x0000FF00);  // +x     -> GREEN
+LED.setPixelColor(XY(0,1), 0x000000FF);  // +y     -> BLUE
+LED.show();
+//while(1) delay(1000);   // freeze so you can look
+#if XY_CALIBRATE
+ XYTest();
+ while (1) delay(1000);          // freeze on the test pattern
+#endif
+}
+
+// //------------------------------------------------------------------------------
+// // Map an (x,y) coordinate to the serpentine LED index.
+// // Origin (0,0) = top-left, x to the right, y downward.
+// // Adjust the two "flip" lines to match your panel's wiring.
+// //------------------------------------------------------------------------------
+// uint16_t XY(byte x, byte y)
+// {
+//  byte t = x; x = y; y = t;            // transpose: swap axes (panel is rotated 90deg)
+//  // If still rotated the wrong way, add ONE of these after the swap:
+//  // x = (MATRIX_WIDTH  - 1) - x;      // ... try this, or
+//  // y = (MATRIX_HEIGHT - 1) - y;      // ... this
+//  if (y % 2) return (y * MATRIX_WIDTH) + (MATRIX_WIDTH - 1 - x);
+//  else       return (y * MATRIX_WIDTH) + x;
+// }
+
+//------------------------------------------------------------------------------
+// Map logical (x,y) -> physical LED index, honouring the orientation #defines.
+// Logical origin (0,0) = top-left, x to the right, y downward.
+//------------------------------------------------------------------------------
+uint16_t XY(byte x, byte y)
+{
+#if MATRIX_TRANSPOSE
+ { byte t = x; x = y; y = t; }
+#endif
+#if MATRIX_FLIP_X
+ x = (MATRIX_WIDTH  - 1) - x;
+#endif
+#if MATRIX_FLIP_Y
+ y = (MATRIX_HEIGHT - 1) - y;
+#endif
+
+#if MATRIX_SERPENTINE
+ bool reverse = (y % 2) ? MATRIX_ODD_ROWS : !MATRIX_ODD_ROWS;
+ if (reverse) return (y * MATRIX_WIDTH) + (MATRIX_WIDTH - 1 - x);
+ else         return (y * MATRIX_WIDTH) + x;
+#else
+ return (y * MATRIX_WIDTH) + x;
+#endif
 }
 //------------------------------------------------------------------------------
 // ARDUINO Loop
@@ -91,23 +170,31 @@ void EveryMinuteUpdate(void)
 // First row and column = 0, PosX,PosY is left top position of 3x5 digit
 // Calculate position LED #define MATRIX_WIDTH 12 #define MATRIX_HEIGHT 12
 //------------------------------------------------------------------------------
-void Zet_Pixel(byte Cijfer,byte Pos_X, byte Pos_Y) 
-{ 
- uint32_t LEDnum;
- for(int i=0;i<3;i++)
-  {  
-   for(int j=0;j<5;j++)
-   {
-    int c = pgm_read_byte_near ( &Getal[Cijfer][i][j]); 
-    if ( c )                                                                                  // if Digit == 1 then turn that light on
-     {                                                                                        // Serial.print(strip.getPixelColor(LEDnum) & 0X00FFFFFF,HEX); Serial.print(" ");
-      if((Pos_Y+j)%2) LEDnum = ((MATRIX_WIDTH -1) - (Pos_X + i) + (Pos_Y + j) * (MATRIX_HEIGHT));
-      else            LEDnum =                      (Pos_X + i) + (Pos_Y + j) * (MATRIX_HEIGHT); 
-      LED.setPixelColor(LEDnum, white);
-     }
-   }
- }
+void Zet_Pixel(byte Cijfer, byte Pos_X, byte Pos_Y)
+{
+ for (int i = 0; i < 3; i++)
+   for (int j = 0; j < 5; j++)
+     if (pgm_read_byte_near(&Getal[Cijfer][i][j]))
+        LED.setPixelColor(XY(Pos_X + i, Pos_Y + j), white);
 }
+
+// void Zet_Pixel(byte Cijfer,byte Pos_X, byte Pos_Y) 
+// { 
+//  uint32_t LEDnum;
+//  for(int i=0;i<3;i++)
+//   {  
+//    for(int j=0;j<5;j++)
+//    {
+//     int c = pgm_read_byte_near ( &Getal[Cijfer][i][j]); 
+//     if ( c )                                                                                  // if Digit == 1 then turn that light on
+//      {                                                                                        // Serial.print(strip.getPixelColor(LEDnum) & 0X00FFFFFF,HEX); Serial.print(" ");
+//       if((Pos_Y+j)%2) LEDnum = ((MATRIX_WIDTH -1) - (Pos_X + i) + (Pos_Y + j) * (MATRIX_HEIGHT));
+//       else            LEDnum =                      (Pos_X + i) + (Pos_Y + j) * (MATRIX_HEIGHT); 
+//       LED.setPixelColor(LEDnum, white);
+//      }
+//    }
+//  }
+// }
 //------------------------------------------------------------------------------
 //  LED Time in four digits in display
 //------------------------------------------------------------------------------

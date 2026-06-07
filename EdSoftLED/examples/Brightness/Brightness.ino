@@ -14,6 +14,7 @@ EdSoftLED LED(NUM_LEDS, LED_PIN, WS2812RGB);                  //
 
 void setup() 
 {
+ LED.begin();
  LED.setBrightness(10);                                        // Set brightness of LEDs
 }
 //------------------------------------------------------------------------------

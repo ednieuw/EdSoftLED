@@ -6,11 +6,12 @@ const byte NUM_LEDS  = 24;                                    // How many leds i
 EdSoftLED LED(NUM_LEDS, LED_PIN, WS2812RGB);                  //  
 //EdSoftLED LED(NUM_LEDS, LED_PIN, SK6812WRGB); 
 
-uint32_t color1 = 0X00000044;             // 0xWWRRGGBB . 44 is aproximately a brighness of 25%
+uint32_t color1 = 0X00000044;             // 0xWWRRGGBB . 44 is aproximately a brighness of 25% Blue
 
 void setup() {
   Serial.begin(115200);
   Serial.println("started");
+  LED.begin();
   LED.fill(color1, 1, 4 );                // Fill LEDs 2,3 and 4 with color1 LED.fill(RGBWColor, FirstLed, NoofLEDs );
 }
 

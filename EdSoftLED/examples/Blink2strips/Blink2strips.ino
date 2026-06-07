@@ -8,10 +8,11 @@ uint32_t color1 = 0X0A0A0A00;             // 0xWWRRGGBB
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("Kleur" );
+  Serial.println("Colour" );
 
   LED = LEDws;                             // LED = LEDws; Select a WS2812 strip  
  // LED = LEDsk;                             // LED = LEDsk; Select a SK6812 strip
+  LED.begin();
   LED.setBrightness(60);
   LED.fill(color1, 0, 14 );                // Fill LEDs 2,3 and 4 with color1 LED.fill(RGBWColor, FirstLed, NoofLEDs );
 }
