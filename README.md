@@ -1,8 +1,10 @@
-# EdSoftLED V1.10.0
+# EdSoftLED V1.11.0
 Arduino library for SK6812 based 4-channel RGBW and WS2812 based 3-channel RGB LEDs, driven by the ESP32 RMT peripheral.
 
 Use Espressif ESP32 core 3.3.0 or higher.
 
+## What's new in 1.11.0
+Corrected typos.
 
 ## What's new in 1.10.0
 - `begin()` now claims the RMT channel (moved out of the constructor) so only the strip you actually use grabs RMT resources — call it once on the active strip.

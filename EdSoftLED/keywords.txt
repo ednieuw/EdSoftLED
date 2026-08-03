@@ -11,31 +11,31 @@ RGBW		KEYWORD1
 # Methods and Functions
 #######################################	
 
-begin		    KEYWORD2
-updateLength    KEYWORD2
-fill		    KEYWORD2
-clear           KEYWORD2
+begin			KEYWORD2
+updateLength	KEYWORD2
+fill			KEYWORD2
+clear			KEYWORD2
 setBrightness	KEYWORD2
-getBrightness   KEYWORD2
-setGamma        KEYWORD2
-setPixelColor   KEYWORD2
-show            KEYWORD2
-showSK6812      KEYWORD2
-showWS2812      KEYWORD2
-numPixels       KEYWORD2
+getBrightness	KEYWORD2
+setGamma		KEYWORD2
+setPixelColor	KEYWORD2
+show			KEYWORD2
+showSK6812		KEYWORD2
+showWS2812		KEYWORD2
+numPixels		KEYWORD2
 getPixelColor	KEYWORD2
-makeRGBWcolor   KEYWORD2
-Color           KEYWORD2
-getWhite        KEYWORD2
-getRed          KEYWORD2
-getGreen        KEYWORD2
-getBlue         KEYWORD2
+makeRGBWcolor	KEYWORD2
+Color			KEYWORD2
+getWhite		KEYWORD2
+getRed			KEYWORD2
+getGreen		KEYWORD2
+getBlue			KEYWORD2
 
 #######################################
 # Constants
 #######################################
 
-SK6812WRGB      LITERAL1
-SK6812WGRB      LITERAL1
-WS2812RGB       LITERAL1
-WS2812GRB       LITERAL1
+SK6812WRGB		LITERAL1
+SK6812WGRB		LITERAL1
+WS2812RGB		LITERAL1
+WS2812GRB		LITERAL1
